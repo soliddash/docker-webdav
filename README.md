@@ -30,7 +30,7 @@ To make sure your data doesn't get deleted, you'll probably want to create a per
 ```
 docker run --restart always -v /srv/dav:/var/lib/dav \
     -e AUTH_TYPE=Digest -e USERNAME=alice -e PASSWORD=secret1234 \
-    --publish 80:80 -d bytemark/webdav
+    --publish 80:80 -d soliddash/webdav
 
 ```
 
@@ -40,7 +40,7 @@ docker run --restart always -v /srv/dav:/var/lib/dav \
 version: '3'
 services:
   webdav:
-    image: bytemark/webdav
+    image: soliddash/webdav
     restart: always
     ports:
       - "80:80"
@@ -61,7 +61,7 @@ If you're happy with a self-signed SSL certificate, specify `-e SSL_CERT=selfsig
 ```
 docker run --restart always -v /srv/dav:/var/lib/dav \
     -e AUTH_TYPE=Basic -e USERNAME=test -e PASSWORD=test \
-    -e SSL_CERT=selfsigned --publish 443:443 -d bytemark/webdav
+    -e SSL_CERT=selfsigned --publish 443:443 -d soliddash/webdav
 
 ```
 
