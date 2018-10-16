@@ -4,16 +4,16 @@
 
 ## Quick reference
 
-This image runs an easily configurable WebDAV server with Apache.
+This image runs an easily configurable WebDAV server with Apache. This custom instance is based of BytemarkHosting's webdav but with performance tweaks.  Why? Because the backup software we use (BackupAssist) writes lots of files to one directory.
 
-You can configure the authentication type, the authentication of multiple users, or to run with a self-signed SSL certificate. If you want a Let's Encrypt certificate, see an example of how to do that [here](https://github.com/BytemarkHosting/configs-webdav-docker).
+You can configure the authentication type, the authentication of multiple users.
 
 * **Code repository:**
-  https://github.com/BytemarkHosting/docker-webdav
+  https://github.com/soliddash/docker-webdav
 * **Where to file issues:**
-  https://github.com/BytemarkHosting/docker-webdav/issues
+  https://github.com/soliddash/docker-webdav/issues
 * **Maintained by:**
-  [Bytemark Hosting](https://www.bytemark.co.uk)
+  [Chris]
 * **Supported architectures:**
   [Any architecture that the `httpd` image supports](https://hub.docker.com/_/httpd/)
 
@@ -30,7 +30,7 @@ To make sure your data doesn't get deleted, you'll probably want to create a per
 ```
 docker run --restart always -v /srv/dav:/var/lib/dav \
     -e AUTH_TYPE=Digest -e USERNAME=alice -e PASSWORD=secret1234 \
-    --publish 80:80 -d bytemark/webdav
+    --publish 80:80 -d soliddash/webdav
 
 ```
 
@@ -40,7 +40,7 @@ docker run --restart always -v /srv/dav:/var/lib/dav \
 version: '3'
 services:
   webdav:
-    image: bytemark/webdav
+    image: soliddash/webdav
     restart: always
     ports:
       - "80:80"
@@ -50,22 +50,7 @@ services:
       PASSWORD: secret1234
     volumes:
       - /srv/dav:/var/lib/dav
-
 ```
-### Secure WebDAV with SSL
-
-We recommend you use a reverse proxy (eg, Traefik) to handle SSL certificates. You can see an example of how to do that [here](https://github.com/BytemarkHosting/configs-webdav-docker).
-
-If you're happy with a self-signed SSL certificate, specify `-e SSL_CERT=selfsigned` and the container will generate one for you.
-
-```
-docker run --restart always -v /srv/dav:/var/lib/dav \
-    -e AUTH_TYPE=Basic -e USERNAME=test -e PASSWORD=test \
-    -e SSL_CERT=selfsigned --publish 443:443 -d bytemark/webdav
-
-```
-
-If you bind mount a certificate chain to `/cert.pem` and a private key to `/privkey.pem`, the container will use that instead!
 
 ### Authenticate multiple clients
 
@@ -103,5 +88,4 @@ All environment variables are optional. You probably want to at least specify `U
 * **`USERNAME`**: Authenticate with this username (and the password below). This is ignored if you bind mount your own authentication file to `/user.passwd`.
 * **`PASSWORD`**: Authenticate with this password (and the username above). This is ignored if you bind mount your own authentication file to `/user.passwd`.
 * **`ANONYMOUS_METHODS`**: Comma-separated list of HTTP request methods (eg, `GET,POST,OPTIONS,PROPFIND`). Clients can use any method you specify here without authentication. Set to `ALL` to disable authentication. The default is to disallow any anonymous access.
-* **`SSL_CERT`**: Set to `selfsigned` to generate a self-signed certificate and enable Apache's SSL module. If you specify `SERVER_NAMES`, the first domain is set as the Common Name.
 

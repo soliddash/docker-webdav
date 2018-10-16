@@ -75,29 +75,6 @@ if [ "x$ANONYMOUS_METHODS" != "x" ]; then
     fi
 fi
 
-# If specified, generate a selfsigned certificate.
-if [ "${SSL_CERT:-none}" = "selfsigned" ]; then
-    # Generate self-signed SSL certificate.
-    # If SERVER_NAMES is given, use the first domain as the Common Name.
-    if [ ! -e /privkey.pem ] || [ ! -e /cert.pem ]; then
-        openssl req -x509 -newkey rsa:2048 -days 1000 -nodes \
-            -keyout /privkey.pem -out /cert.pem -subj "/CN=${SERVER_NAME:-selfsigned}"
-    fi
-fi
-
-# This will either be the self-signed certificate generated above or one that
-# has been bind mounted in by the user.
-if [ -e /privkey.pem ] && [ -e /cert.pem ]; then
-    # Enable SSL Apache modules.
-    for i in http2 ssl; do
-        sed -e "/^#LoadModule ${i}_module.*/s/^#//" \
-            -i "$HTTPD_PREFIX/conf/httpd.conf"
-    done
-    # Enable SSL vhost.
-    ln -sf ../sites-available/default-ssl.conf \
-        "$HTTPD_PREFIX/conf/sites-enabled"
-fi
-
 # Create directories for Dav data and lock database.
 [ ! -d "/var/lib/dav/data" ] && mkdir -p "/var/lib/dav/data"
 [ ! -e "/var/lib/dav/DavLock" ] && touch "/var/lib/dav/DavLock"

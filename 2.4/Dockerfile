@@ -45,11 +45,9 @@ RUN set -ex; \
     mkdir -p "conf/conf-enabled"; \
     mkdir -p "conf/sites-enabled"; \
     ln -s ../conf-available/dav.conf "conf/conf-enabled"; \
-    ln -s ../sites-available/default.conf "conf/sites-enabled"; \
-    # Install openssl if we need to generate a self-signed certificate.
-    apk add --no-cache openssl
+    ln -s ../sites-available/default.conf "conf/sites-enabled";
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-EXPOSE 80/tcp 443/tcp
+EXPOSE 80/tcp
 ENTRYPOINT [ "docker-entrypoint.sh" ]
 CMD [ "httpd-foreground" ]
